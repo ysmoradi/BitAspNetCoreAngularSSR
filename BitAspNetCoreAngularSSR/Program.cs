@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore;
+using Bit.OwinCore;
 using Microsoft.AspNetCore.Hosting;
 using System.Threading.Tasks;
 
@@ -8,13 +8,13 @@ namespace BitAspNetCoreAngularSSR
     {
         public static async Task Main(string[] args)
         {
-            await CreateWebHostBuilder(args)
-                .Build()
+            await BuildWebHost(args)
                 .RunAsync();
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
+        public static IWebHost BuildWebHost(string[] args) =>
+            BitWebHost.CreateDefaultBuilder(args)
+                .UseStartup<Startup>()
+                .Build();
     }
 }

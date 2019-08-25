@@ -1,83 +1,133 @@
+using Bit.Core;
+using Bit.Core.Contracts;
+using Bit.Core.Implementations;
+using Bit.Model.Implementations;
+using Bit.OData.Contracts;
+using Bit.Owin.Implementations;
+using Bit.OwinCore;
+using Bit.OwinCore.Contracts;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using Swashbuckle.Application;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+
+[assembly: ODataModule("SampleApp")]
 
 namespace BitAspNetCoreAngularSSR
 {
-    public class Startup
+    public class Startup : AutofacAspNetCoreAppStartup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IServiceProvider serviceProvider)
+            : base(serviceProvider)
         {
-            Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
-
-        public void ConfigureServices(IServiceCollection services)
+        public override IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc(options => options.EnableEndpointRouting = false);
+            DefaultAppModulesProvider.Current = new SampleAppModulesProvider();
 
+            return base.ConfigureServices(services);
+        }
+    }
+
+    public class SampleAppModulesProvider : IAppModule, IAppModulesProvider
+    {
+        public IEnumerable<IAppModule> GetAppModules()
+        {
+            yield return this;
+        }
+
+        public virtual void ConfigureDependencies(IServiceCollection services, IDependencyManager dependencyManager)
+        {
+            AssemblyContainer.Current.Init();
+
+            dependencyManager.RegisterMinimalDependencies();
+
+            dependencyManager.RegisterDefaultLogger(typeof(DebugLogStore).GetTypeInfo(), typeof(ConsoleLogStore).GetTypeInfo());
+
+            dependencyManager.RegisterDefaultAspNetCoreApp();
+
+            services.AddResponseCompression(options => options.EnableForHttps = true);
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp/dist/";
             });
 
-            services.AddResponseCompression(options => options.EnableForHttps = true);
-        }
+            var appEnv = DefaultAppEnvironmentsProvider.Current.GetActiveAppEnvironment();
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
-            if (env.IsDevelopment())
+            dependencyManager.RegisterAspNetCoreMiddlewareUsing(aspNetCoreApp =>
             {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Error");
-                app.UseHsts();
-            }
-
-            app.UseHttpsRedirection();
-
-            app.UseResponseCompression();
-            app.UseStaticFiles();
-            app.UseSpaStaticFiles();
-
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller}/{action=Index}/{id?}");
+                aspNetCoreApp.UseResponseCompression();
+                aspNetCoreApp.UseHttpsRedirection();
+                aspNetCoreApp.UseStaticFiles();
+                aspNetCoreApp.UseSpaStaticFiles();
             });
 
-            app.UseSpa(spa =>
+            dependencyManager.RegisterMinimalAspNetCoreMiddlewares();
+
+            dependencyManager.RegisterMetadata();
+
+            dependencyManager.RegisterDefaultWebApiAndODataConfiguration();
+
+            dependencyManager.RegisterWebApiMiddleware(webApiDependencyManager =>
             {
-                spa.Options.SourcePath = "ClientApp";
+                webApiDependencyManager.RegisterWebApiMiddlewareUsingDefaultConfiguration();
+
+                webApiDependencyManager.RegisterGlobalWebApiCustomizerUsing(httpConfiguration =>
+                {
+                    httpConfiguration.EnableSwagger(c =>
+                    {
+                        c.SingleApiVersion("v1", $"Swagger-Api");
+                        c.ApplyDefaultApiConfig(httpConfiguration);
+                    }).EnableBitSwaggerUi();
+                });
+            });
+
+            dependencyManager.RegisterODataMiddleware(odataDependencyManager =>
+            {
+                odataDependencyManager.RegisterGlobalWebApiCustomizerUsing(httpConfiguration =>
+                {
+                    httpConfiguration.EnableSwagger(c =>
+                    {
+                        c.SingleApiVersion("v1", $"Swagger-Api");
+                        c.ApplyDefaultODataConfig(httpConfiguration);
+                    }).EnableBitSwaggerUi();
+                });
+
+                odataDependencyManager.RegisterWebApiODataMiddlewareUsingDefaultConfiguration();
+            });
+
+            dependencyManager.RegisterDtoEntityMapper();
+            dependencyManager.RegisterMapperConfiguration<DefaultMapperConfiguration>();
+
+            dependencyManager.RegisterAspNetCoreMiddlewareUsing(aspNetCoreApp =>
+            {
+                aspNetCoreApp.UseSpa(spa =>
+                {
+                    spa.Options.SourcePath = "ClientApp";
 
 #if BuildServerSideRenderer
-                spa.UseSpaPrerendering(options =>
-                {
-                    options.BootModulePath = $"{spa.Options.SourcePath}/dist/main.js";
-                    options.BootModuleBuilder = env.IsDevelopment()
-                        ? new AngularCliBuilder(npmScript: "build:ssr")
-                        : null;
-                    options.ExcludeUrls = new[] { "/sockjs-node" };
-
-                    options.SupplyData = (context, data) =>
+                    spa.UseSpaPrerendering(options =>
                     {
+                        options.BootModulePath = $"{spa.Options.SourcePath}/dist/main.js";
+                        options.BootModuleBuilder = appEnv.DebugMode
+                            ? new AngularCliBuilder(npmScript: "build:ssr")
+                            : null;
+                        options.ExcludeUrls = new[] { "/sockjs-node" };
 
-                    };
-                });
+                        options.SupplyData = (context, data) =>
+                        {
+
+                        };
+                    });
 #endif
-                if (env.IsDevelopment())
-                {
-                    spa.UseAngularCliServer(npmScript: "start");
-                }
-            });
+                    if (appEnv.DebugMode)
+                        spa.UseAngularCliServer(npmScript: "start");
+                });
+            }, MiddlewarePosition.AfterOwinMiddlewares);
         }
     }
 }

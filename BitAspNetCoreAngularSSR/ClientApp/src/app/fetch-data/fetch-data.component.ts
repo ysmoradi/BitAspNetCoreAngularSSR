@@ -14,15 +14,15 @@ export class FetchDataComponent {
   }
 
   public ngOnInit() {
-    this.http.get<WeatherForecast[]>('weatherforecast').subscribe(result => {
+    this.http.get<WeatherForecast[]>('odata/SampleApp/WeatherForecast').subscribe(result => {
       this.forecasts = result;
     }, error => console.error(error));
   }
 }
 
 interface WeatherForecast {
-  dateFormatted: string;
-  temperatureC: number;
-  temperatureF: number;
-  summary: string;
+  Date: string;
+  TemperatureC: number;
+  TemperatureF: number;
+  Summary: string;
 }

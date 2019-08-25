@@ -6,6 +6,7 @@
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
     <SpaRoot>ClientApp\</SpaRoot>
     <BuildServerSideRenderer>true</BuildServerSideRenderer>
+    <!-- Please delete bin/obj/dist everytime you switch BuildServerSideRenderer's value -->
     <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**;$(SpaRoot)dist\**;</DefaultItemExcludes>
     <DefineConstants Condition="'$(BuildServerSideRenderer)' == 'true'">BuildServerSideRenderer</DefineConstants>
   </PropertyGroup>
@@ -18,6 +19,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Bit.OData" Version="2.7.0" />
+    <PackageReference Include="Bit.OwinCore" Version="2.7.0" />
+    <PackageReference Include="Bit.OwinCore.AspNetCore22Upgrade" Version="2.7.0" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.0.0-preview8.19405.7" />
   </ItemGroup>
 
