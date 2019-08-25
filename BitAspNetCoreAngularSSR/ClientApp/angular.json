@@ -15,7 +15,8 @@
           "options": {
             "progress": true,
             "extractCss": true,
-            "outputPath": "dist/browser",
+            "outputPath": "dist",
+            "deleteOutputPath": false,
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -80,7 +81,8 @@
         "server": {
           "builder": "@angular-devkit/build-angular:server",
           "options": {
-            "outputPath": "dist/server",
+            "outputPath": "dist",
+            "deleteOutputPath": false,
             "main": "src/main.server.ts",
             "tsConfig": "src/tsconfig.server.json"
           },

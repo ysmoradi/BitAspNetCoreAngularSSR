@@ -6,10 +6,6 @@
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
     <SpaRoot>ClientApp\</SpaRoot>
     <BuildServerSideRenderer>true</BuildServerSideRenderer>
-    <!-- 
-    Disable BuildServerSideRenderer in debug mode is a good idea. Live reload is not working with SSR.    
-    ServerSideRenderer works better in production. In development, every route reloads entire page, but in production (publish) it serves initial page to client, then at client side, angular app gets bootstrapped and it continue its work as normal spa angular app.
-    -->
     <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**;$(SpaRoot)dist\**;</DefaultItemExcludes>
     <DefineConstants Condition="'$(BuildServerSideRenderer)' == 'true'">BuildServerSideRenderer</DefineConstants>
   </PropertyGroup>

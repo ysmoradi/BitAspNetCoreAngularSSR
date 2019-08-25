@@ -22,11 +22,7 @@ namespace BitAspNetCoreAngularSSR
 
             services.AddSpaStaticFiles(configuration =>
             {
-#if BuildServerSideRenderer
-                configuration.RootPath = "ClientApp/dist/server/";
-#else
-                configuration.RootPath = "ClientApp/dist/browser/";
-#endif
+                configuration.RootPath = "ClientApp/dist/";
             });
 
             services.AddResponseCompression(options => options.EnableForHttps = true);
@@ -65,7 +61,7 @@ namespace BitAspNetCoreAngularSSR
 #if BuildServerSideRenderer
                 spa.UseSpaPrerendering(options =>
                 {
-                    options.BootModulePath = $"{spa.Options.SourcePath}/dist/server/main.js";
+                    options.BootModulePath = $"{spa.Options.SourcePath}/dist/main.js";
                     options.BootModuleBuilder = env.IsDevelopment()
                         ? new AngularCliBuilder(npmScript: "build:ssr")
                         : null;
