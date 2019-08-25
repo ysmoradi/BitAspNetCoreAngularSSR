@@ -71,12 +71,12 @@ namespace BitAspNetCoreAngularSSR
                         : null;
                     options.ExcludeUrls = new[] { "/sockjs-node" };
 
-                    options.SupplyData = (context, data) => {
-                        data.Add("message", "Message from the server");
+                    options.SupplyData = (context, data) =>
+                    {
+
                     };
                 });
 #endif
-
                 if (env.IsDevelopment())
                 {
                     spa.UseAngularCliServer(npmScript: "start");
