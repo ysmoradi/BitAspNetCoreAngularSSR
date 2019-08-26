@@ -7,7 +7,7 @@ namespace BitAspNetCoreAngularSSR
     public class WeatherForecastDto : IDto
     {
         [Key]
-        public DateTime Date { get; set; }
+        public DateTimeOffset Date { get; set; }
 
         public int TemperatureC { get; set; }
 

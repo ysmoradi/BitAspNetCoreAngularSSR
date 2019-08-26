@@ -4,6 +4,7 @@ using Bit.Core.Implementations;
 using Bit.Model.Implementations;
 using Bit.OData.Contracts;
 using Bit.Owin.Implementations;
+using Bit.Owin.Middlewares;
 using Bit.OwinCore;
 using Bit.OwinCore.Contracts;
 using Microsoft.AspNetCore.Builder;
@@ -12,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.Application;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 [assembly: ODataModule("SampleApp")]
@@ -70,6 +72,8 @@ namespace BitAspNetCoreAngularSSR
 
             dependencyManager.RegisterMetadata();
 
+            dependencyManager.RegisterOwinMiddleware<ClientAppProfileMiddlewareConfiguration>(); // https://github.com/bit-foundation/bit-framework/issues/165
+
             dependencyManager.RegisterDefaultWebApiAndODataConfiguration();
 
             dependencyManager.RegisterWebApiMiddleware(webApiDependencyManager =>
@@ -118,9 +122,19 @@ namespace BitAspNetCoreAngularSSR
                             : null;
                         options.ExcludeUrls = new[] { "/sockjs-node" };
 
-                        options.SupplyData = (context, data) =>
+                        options.SupplyData = (httpContext, data) =>
                         {
+                            string[] SeachEnginesUserAgents = new string[] {
+                                "google",
+                                "bing",
+                                "linkedin",
+                            };
 
+                            string agent = httpContext.Request.Headers["User-Agent"];
+
+                            bool isSearchEngine = SeachEnginesUserAgents.Any(a => agent.Contains(a, StringComparison.InvariantCultureIgnoreCase));
+
+                            data.Add("isSearchEngine", isSearchEngine); // see main.server.ts
                         };
                     });
 #endif

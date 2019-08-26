@@ -22,6 +22,7 @@
     <PackageReference Include="Bit.OData" Version="2.7.0" />
     <PackageReference Include="Bit.OwinCore" Version="2.7.0" />
     <PackageReference Include="Bit.OwinCore.AspNetCore22Upgrade" Version="2.7.0" />
+    <PackageReference Include="BitCodeGeneratorTask" Version="2.7.0" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.0.0-preview8.19405.7" />
   </ItemGroup>
 
