@@ -12,13 +12,18 @@ enableProdMode();
 export default createServerRenderer(async params => {
   const { AppServerModule, AppServerModuleNgFactory, LAZY_MODULE_MAP } = module.exports;
 
+  console.info(`isSearchEngine's value is: ${params.data.isSearchEngine}`);
+  // you can use console.info and other console methods to see variable values in SSR. These info can be seen in asp.net core's console.
+  // It's a good idea to use asp.net core in console mode instead of IIS Express.
+
   const options = {
     document: params.data.originalHtml,
     url: params.url,
     extraProviders: [
       provideModuleMap(LAZY_MODULE_MAP),
       { provide: APP_BASE_HREF, useValue: params.baseUrl },
-      { provide: 'BASE_URL', useValue: params.origin + params.baseUrl }
+      { provide: 'BASE_URL', useValue: params.origin + params.baseUrl },
+      { provide: 'isSearchEngine', useValue: params.data.isSearchEngine }
     ]
   };
 

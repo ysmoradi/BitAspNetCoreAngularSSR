@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.Application;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 [assembly: ODataModule("SampleApp")]
@@ -118,9 +119,19 @@ namespace BitAspNetCoreAngularSSR
                             : null;
                         options.ExcludeUrls = new[] { "/sockjs-node" };
 
-                        options.SupplyData = (context, data) =>
+                        options.SupplyData = (httpContext, data) =>
                         {
+                            string[] SeachEnginesUserAgents = new string[] {
+                                "google",
+                                "bing",
+                                "linkedin",
+                            };
 
+                            string agent = httpContext.Request.Headers["User-Agent"];
+
+                            bool isSearchEngine = SeachEnginesUserAgents.Any(a => agent.Contains(a, StringComparison.InvariantCultureIgnoreCase));
+
+                            data.Add("isSearchEngine", isSearchEngine); // see main.server.ts
                         };
                     });
 #endif
