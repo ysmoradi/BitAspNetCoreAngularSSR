@@ -5,13 +5,9 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e",
-    "compile:server": "webpack --config webpack.server.config.js --progress --colors",
-    "serve:ssr": "node dist",
-    "build:ssr": "npm run build:client-and-server-bundles && npm run compile:server",
-    "build:client-and-server-bundles": "ng build --prod && ng run BitAspNetCoreAngularSSR:server:production --bundleDependencies all && npm run compile:server && npm run-script concat",
+    "build:ssr": "ng run BitAspNetCoreAngularSSR:server --bundleDependencies all && npm run-script concat",
+    "build:all-prod": "ng build --prod && ng run BitAspNetCoreAngularSSR:server:production --bundleDependencies all && npm run-script concat",
     "concat": "concat -o dist/main.js clientAppProfile.js node_modules/@bit/bit-framework/bit.core.js dist/main.js"
   },
   "private": true,
@@ -25,12 +21,10 @@
     "@angular/platform-browser-dynamic": "~8.2.3",
     "@angular/platform-server": "~8.2.3",
     "@angular/router": "~8.2.3",
-    "@nguniversal/express-engine": "^8.1.1",
     "@nguniversal/module-map-ngfactory-loader": "8.1.1",
     "aspnet-prerendering": "^3.0.1",
     "bootstrap": "^4.3.1",
     "core-js": "^2.6.9",
-    "express": "^4.17.1",
     "rxjs": "~6.5.2",
     "tslib": "^1.10.0",
     "zone.js": "~0.10.2",
@@ -46,8 +40,7 @@
     "codelyzer": "^5.1.0",
     "concat": "^1.0.3",
     "ts-loader": "^6.0.4",
-    "typescript": "~3.4.5",
-    "webpack-cli": "^3.3.7"
+    "typescript": "~3.4.5"
   },
   "optionalDependencies": {
     "node-sass": "^4.12.2",
