@@ -4,6 +4,7 @@ using Bit.Core.Implementations;
 using Bit.Model.Implementations;
 using Bit.OData.Contracts;
 using Bit.Owin.Implementations;
+using Bit.Owin.Middlewares;
 using Bit.OwinCore;
 using Bit.OwinCore.Contracts;
 using Microsoft.AspNetCore.Builder;
@@ -70,6 +71,8 @@ namespace BitAspNetCoreAngularSSR
             dependencyManager.RegisterMinimalAspNetCoreMiddlewares();
 
             dependencyManager.RegisterMetadata();
+
+            dependencyManager.RegisterOwinMiddleware<ClientAppProfileMiddlewareConfiguration>(); // https://github.com/bit-foundation/bit-framework/issues/165
 
             dependencyManager.RegisterDefaultWebApiAndODataConfiguration();
 

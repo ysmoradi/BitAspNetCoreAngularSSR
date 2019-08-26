@@ -32,7 +32,9 @@
     "express": "^4.17.1",
     "rxjs": "~6.5.2",
     "tslib": "^1.10.0",
-    "zone.js": "~0.10.2"
+    "zone.js": "~0.10.2",
+    "@bit/bit-framework": "^2.7.0",
+    "@bit/jaydata": "^1.5.20"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.803.0",

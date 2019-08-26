@@ -1,0 +1,25 @@
+{
+  "BitCodeGeneratorConfigs": {
+    "BitCodeGeneratorMappings": [
+      {
+        "Route": "SampleApp",
+        "DestinationFileName": "ClientApp/src/app/SampleApp.Model.Context",
+        "TypingsPath": "../../node_modules/@bit/jaydata/jaydata.d.ts",
+        "SourceProjects": [
+          {
+            "Name": "BitAspNetCoreAngularSSR"
+          }
+        ],
+        "DestinationProject": {
+          "Name": "BitAspNetCoreAngularSSR"
+        },
+        "NamespaceAliases": [
+          {
+            "Namespace": "BitAspNetCoreAngularSSR.Dto",
+            "Alias": "SampleAppModel"
+          }
+        ]
+      }
+    ]
+  }
+}
