@@ -11,7 +11,8 @@
     "compile:server": "webpack --config webpack.server.config.js --progress --colors",
     "serve:ssr": "node dist",
     "build:ssr": "npm run build:client-and-server-bundles && npm run compile:server",
-    "build:client-and-server-bundles": "ng build --prod && ng run BitAspNetCoreAngularSSR:server:production --bundleDependencies all && npm run compile:server"
+    "build:client-and-server-bundles": "ng build --prod && ng run BitAspNetCoreAngularSSR:server:production --bundleDependencies all && npm run compile:server && npm run-script concat",
+    "concat": "concat -o dist/main.js clientAppProfile.js node_modules/@bit/bit-framework/bit.core.js dist/main.js"
   },
   "private": true,
   "dependencies": {
@@ -43,6 +44,7 @@
     "@angular/language-service": "~8.2.3",
     "@types/node": "~12.7.2",
     "codelyzer": "^5.1.0",
+    "concat": "^1.0.3",
     "ts-loader": "^6.0.4",
     "typescript": "~3.4.5",
     "webpack-cli": "^3.3.7"
