@@ -1,29 +1,24 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, PLATFORM_ID } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { EntityContextProvider } from '../bit-exports';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-fetch-data',
   templateUrl: './fetch-data.component.html'
 })
 export class FetchDataComponent {
-  public forecasts: SampleAppModel.WeatherForecastDto[];
+  public forecasts: any[];
 
-  public constructor(titleService: Title, @Inject("isSearchEngine") private isSearchEngine: boolean) {
+  public constructor(titleService: Title,
+    @Inject("isSearchEngine") private isSearchEngine: boolean,
+    private http: HttpClient) {
     titleService.setTitle('Weather');
     console.info(`isSearchEngine: ${isSearchEngine}`); // in server side, it will be true if an agent is a SearchEngine crawler (See supply data in Startup.cs). In client side it will be false always, see main.ts
   }
 
   public async ngOnInit() {
-    if (typeof global == "undefined") {
-      /* code is running client side */
-      const entityContextProvider = EntityContextProvider;
-      const context = await entityContextProvider.getContext<SampleAppContext>("SampleApp");
-      this.forecasts = await context.weatherForecast.toArray();
-    }
-    else {
-      // this is a sample of detecting client/server in code. You can use httpClient in server side too. Do not wrap all httpClient codes in such a if!
-      this.forecasts = [new SampleAppModel.WeatherForecastDto({ Date: new Date(), TemperatureC: 12, TemperatureF: 20, Summary: '!' })];
-    }
+    this.http.get<any[]>('odata/SampleApp/WeatherForecast').subscribe(result => {
+      this.forecasts = result;
+    });
   }
 }

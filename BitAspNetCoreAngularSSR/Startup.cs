@@ -7,6 +7,7 @@ using Bit.Owin.Implementations;
 using Bit.Owin.Middlewares;
 using Bit.OwinCore;
 using Bit.OwinCore.Contracts;
+using Bit.OwinCore.Implementations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,6 +26,7 @@ namespace BitAspNetCoreAngularSSR
         public Startup(IServiceProvider serviceProvider)
             : base(serviceProvider)
         {
+            AspNetCoreAppEnvironmentsProvider.Current.Init();
         }
 
         public override IServiceProvider ConfigureServices(IServiceCollection services)

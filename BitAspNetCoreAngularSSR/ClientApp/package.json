@@ -8,7 +8,7 @@
     "lint": "ng lint",
     "build:ssr": "ng run BitAspNetCoreAngularSSR:server --bundleDependencies all && npm run-script concat",
     "build:all-prod": "ng build --prod && ng run BitAspNetCoreAngularSSR:server:production --bundleDependencies all && npm run-script concat",
-    "concat": "concat -o dist/main.js clientAppProfile.js node_modules/@bit/bit-framework/bit.core.js dist/main.js"
+    "concat": "concat -o dist/main.js shim.js dist/main.js"
   },
   "private": true,
   "dependencies": {
@@ -27,9 +27,7 @@
     "core-js": "^3.2.1",
     "rxjs": "~6.5.3",
     "tslib": "^1.10.0",
-    "zone.js": "~0.10.2",
-    "@bit/bit-framework": "^2.7.1",
-    "@bit/jaydata": "^1.5.20"
+    "zone.js": "~0.10.2"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.803.8",
