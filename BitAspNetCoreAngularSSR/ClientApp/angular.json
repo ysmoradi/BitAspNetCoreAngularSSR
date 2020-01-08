@@ -128,5 +128,8 @@
     "@schematics/angular:service": {
       "spec": false
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }
