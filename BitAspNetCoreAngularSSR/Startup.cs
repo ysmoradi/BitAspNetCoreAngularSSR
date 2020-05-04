@@ -1,13 +1,11 @@
 using Bit.Core;
 using Bit.Core.Contracts;
-using Bit.Core.Implementations;
 using Bit.Model.Implementations;
 using Bit.OData.Contracts;
+using Bit.Owin;
+using Bit.Owin.Contracts;
 using Bit.Owin.Implementations;
 using Bit.Owin.Middlewares;
-using Bit.OwinCore;
-using Bit.OwinCore.Contracts;
-using Bit.OwinCore.Implementations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.DependencyInjection;
