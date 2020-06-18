@@ -19,9 +19,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Bit.Server.OData" Version="5.2.0" />
-    <PackageReference Include="Bit.Server.Owin" Version="5.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.1.4" />
+    <PackageReference Include="Bit.Server.OData" Version="5.4.0" />
+    <PackageReference Include="Bit.Server.Owin" Version="5.4.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.1.5" />
   </ItemGroup>
 
 </Project>
