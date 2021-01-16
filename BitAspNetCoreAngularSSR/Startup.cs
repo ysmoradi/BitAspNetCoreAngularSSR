@@ -5,16 +5,18 @@ using Bit.OData.Contracts;
 using Bit.Owin;
 using Bit.Owin.Contracts;
 using Bit.Owin.Implementations;
-using Bit.Owin.Middlewares;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Swashbuckle.Application;
 using System;
 using System.Collections.Generic;
+using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
+using System.Web.Http;
 
 [assembly: ODataModule("SampleApp")]
 
@@ -53,7 +55,19 @@ namespace BitAspNetCoreAngularSSR
 
             dependencyManager.RegisterDefaultAspNetCoreApp();
 
-            services.AddResponseCompression(options => options.EnableForHttps = true);
+            services.AddResponseCompression(options =>
+            {
+                options.EnableForHttps = true;
+                options.Providers.Add<GzipCompressionProvider>();
+                options.Providers.Add<BrotliCompressionProvider>();
+            }).Configure<GzipCompressionProviderOptions>(options =>
+            {
+                options.Level = CompressionLevel.Fastest;
+            }).Configure<BrotliCompressionProviderOptions>(options =>
+            {
+                options.Level = CompressionLevel.Fastest;
+            });
+
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp/dist/";
@@ -61,8 +75,8 @@ namespace BitAspNetCoreAngularSSR
 
             dependencyManager.RegisterAspNetCoreMiddlewareUsing(aspNetCoreApp =>
             {
-                aspNetCoreApp.UseResponseCompression();
                 aspNetCoreApp.UseHttpsRedirection();
+                aspNetCoreApp.UseResponseCompression();
                 aspNetCoreApp.UseStaticFiles();
                 aspNetCoreApp.UseSpaStaticFiles();
             });
@@ -70,8 +84,6 @@ namespace BitAspNetCoreAngularSSR
             dependencyManager.RegisterMinimalAspNetCoreMiddlewares();
 
             dependencyManager.RegisterMetadata();
-
-            dependencyManager.RegisterOwinMiddleware<ClientAppProfileMiddlewareConfiguration>(); // https://github.com/bit-foundation/bit-framework/issues/165
 
             dependencyManager.RegisterDefaultWebApiAndODataConfiguration();
 
@@ -93,11 +105,7 @@ namespace BitAspNetCoreAngularSSR
             {
                 odataDependencyManager.RegisterGlobalWebApiCustomizerUsing(httpConfiguration =>
                 {
-                    httpConfiguration.EnableSwagger(c =>
-                    {
-                        c.SingleApiVersion("v1", $"Swagger-Api");
-                        c.ApplyDefaultODataConfig(httpConfiguration);
-                    }).EnableBitSwaggerUi();
+                    httpConfiguration.EnableMultiVersionWebApiSwaggerWithUI();
                 });
 
                 odataDependencyManager.RegisterWebApiODataMiddlewareUsingDefaultConfiguration();
