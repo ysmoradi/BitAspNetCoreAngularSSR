@@ -5,6 +5,7 @@ using Bit.OData.Contracts;
 using Bit.Owin;
 using Bit.Owin.Contracts;
 using Bit.Owin.Implementations;
+using BitAspNetCoreAngularSSR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
@@ -19,36 +20,18 @@ using System.Reflection;
 using System.Web.Http;
 
 [assembly: ODataModule("SampleApp")]
+[assembly: AppModule(typeof(SampleAppModule))]
 
 namespace BitAspNetCoreAngularSSR
 {
-    public class Startup : AutofacAspNetCoreAppStartup
+    public class Startup : AspNetCoreAppStartup
     {
-        public Startup(IServiceProvider serviceProvider)
-            : base(serviceProvider)
-        {
-            AspNetCoreAppEnvironmentsProvider.Current.Init();
-        }
-
-        public override IServiceProvider ConfigureServices(IServiceCollection services)
-        {
-            DefaultAppModulesProvider.Current = new SampleAppModulesProvider();
-
-            return base.ConfigureServices(services);
-        }
     }
 
-    public class SampleAppModulesProvider : IAppModule, IAppModulesProvider
+    public class SampleAppModule : IAppModule
     {
-        public IEnumerable<IAppModule> GetAppModules()
-        {
-            yield return this;
-        }
-
         public virtual void ConfigureDependencies(IServiceCollection services, IDependencyManager dependencyManager)
         {
-            AssemblyContainer.Current.Init();
-
             dependencyManager.RegisterMinimalDependencies();
 
             dependencyManager.RegisterDefaultLogger(typeof(DebugLogStore).GetTypeInfo(), typeof(ConsoleLogStore).GetTypeInfo());
@@ -135,7 +118,7 @@ namespace BitAspNetCoreAngularSSR
                     spa.UseSpaPrerendering(options =>
                     {
                         options.BootModulePath = $"{spa.Options.SourcePath}/dist/main.js";
-                        options.BootModuleBuilder = AspNetCoreAppEnvironmentsProvider.Current.WebHostEnvironment.IsDevelopment()
+                        options.BootModuleBuilder = AspNetCoreAppEnvironmentsProvider.Current.HostingEnvironment.IsDevelopment()
                             ? new AngularCliBuilder(npmScript: "build:ssr")
                             : null;
                         options.ExcludeUrls = new[] { "/sockjs-node" };
@@ -156,7 +139,7 @@ namespace BitAspNetCoreAngularSSR
                         };
                     });
 #endif
-                    if (AspNetCoreAppEnvironmentsProvider.Current.WebHostEnvironment.IsDevelopment())
+                    if (AspNetCoreAppEnvironmentsProvider.Current.HostingEnvironment.IsDevelopment())
                         spa.UseAngularCliServer(npmScript: "start");
                 });
             }, MiddlewarePosition.AfterOwinMiddlewares);
